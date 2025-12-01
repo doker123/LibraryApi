@@ -1,11 +1,8 @@
-# library_api/books/tests.py
 from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
-
 from .models import Author, Book
-
 
 class BookModelTest(TestCase):
     """Тесты на уровне модели."""
@@ -93,23 +90,20 @@ class BookAPITestCase(TestCase):
         self.author_data = {"name": "Антон Чехов", "biography": "Русский классик"}
 
     def test_anonymous_can_read_books(self):
-        """Анонимный пользователь может просматривать книги."""
         response = self.client.get('/api/books/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_anonymous_cannot_create_book(self):
-        """Аноним не может добавлять книги."""
         response = self.client.post('/api/books/', {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_regular_user_cannot_create_book(self):
-        """Обычный пользователь не может добавлять книги."""
         self.client.force_authenticate(user=self.user)
         response = self.client.post('/api/books/', {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_create_book(self):
-        """Администратор может добавлять книги."""
+
         self.client.force_authenticate(user=self.admin)
         data = {
             "title": "Преступление и наказание",
@@ -124,14 +118,14 @@ class BookAPITestCase(TestCase):
         self.assertEqual(Book.objects.count(), 1)
 
     def test_admin_can_create_author(self):
-        """Администратор может добавлять авторов."""
+
         self.client.force_authenticate(user=self.admin)
         response = self.client.post('/api/authors/', self.author_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Author.objects.count(), 2)  # +1 к Достоевскому
 
     def test_search_books_by_title(self):
-        """Поиск книг по названию работает."""
+
         Book.objects.create(
             title="Идиот",
             author=self.author,
@@ -145,7 +139,7 @@ class BookAPITestCase(TestCase):
         self.assertEqual(len(response.data['results']), 1)
 
     def test_search_books_by_author(self):
-        """Поиск книг по автору работает."""
+
         Book.objects.create(
             title="Братья Карамазовы",
             author=self.author,
@@ -159,7 +153,6 @@ class BookAPITestCase(TestCase):
         self.assertEqual(len(response.data['results']), 1)
 
     def test_fiction_unique_validation_api(self):
-        """API предотвращает дублирование художественных книг."""
         self.client.force_authenticate(user=self.admin)
         data = {
             "title": "Анна Каренина",
@@ -179,7 +172,7 @@ class BookAPITestCase(TestCase):
         self.assertIn("Книга с такими параметрами уже существует", str(response2.data))
 
     def test_textbook_unique_validation_api(self):
-        """API предотвращает дублирование учебников с тем же годом и издательством."""
+
         self.client.force_authenticate(user=self.admin)
         data = {
             "title": "Физика 10",
@@ -189,6 +182,6 @@ class BookAPITestCase(TestCase):
             "category": "textbook",
             "publisher": "Дрофа"
         }
-        self.client.post('/api/books/', data)  # первый раз — OK
-        response = self.client.post('/api/books/', data)  # второй — ошибка
+        self.client.post('/api/books/', data)
+        response = self.client.post('/api/books/', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

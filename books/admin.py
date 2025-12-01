@@ -1,4 +1,3 @@
-# library_api/books/admin.py
 from django.contrib import admin
 from .models import Author, Book
 
@@ -25,4 +24,4 @@ class BookAdmin(admin.ModelAdmin):
         'cover_image',
         'file'
     )
-    raw_id_fields = ('author',)  # удобно при большом числе авторов
+    raw_id_fields = ('author',)

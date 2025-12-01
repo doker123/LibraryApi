@@ -30,3 +30,20 @@ RESTful-сервис на базе Django и Django REST Framework для упр
    ```bash
    git clone https://github.com/ваш-логин/e-library-api.git
    cd e-library-api
+2. **Создайте виртуальное окружение и активируйте его**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate    # Linux/macOS
+   venv\Scripts\activate       # Windows
+3. **Установите зависимости**
+   ```bash
+   pip install -r requirements.txt
+4. **Выполните миграции**
+   ```bash
+   python manage.py migrate
+5. **Создайте суперпользователя (администратора)**
+   ```bash
+   python manage.py createsuperuser
+6. **Запустите сервер**
+   ```bash
+   python manage.py runserver

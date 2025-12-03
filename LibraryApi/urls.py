@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/', include('books.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('', RedirectView.as_view(url='/api/', permanent=False)),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
